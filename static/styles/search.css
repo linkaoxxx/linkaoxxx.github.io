@@ -1,0 +1,56 @@
+.btn {
+    background-color: rgba(160, 95, 171, 1);
+    color: white;
+    border-color: rgba(160, 95, 171, 1)
+}
+.btn:hover {
+    background-color: rgba(235, 189, 242, 1);
+    border-color: rgba(160, 95, 171, 1)
+}
+.btn {
+    width: 100%;
+    border-color: white;
+    font-size: 1.5rem;
+}
+.col {
+    padding: 1rem;
+}
+#cont {
+    background-color: rgba(160, 95, 171, 1);
+    align-items: center;
+    border-radius: 10px;
+}
+.input-group {
+    border-radius: 10px;
+    margin-top: 3px;
+}
+.col-xxl {
+    margin-top: 3px;
+}
+#datepicker {
+    background-color: rgba(160, 95, 171, 1);
+    border-color: white;
+    color: white;
+    border-radius: 10px;
+}
+#datepicker::placeholder {
+    color: white;
+}
+#datepicker:focus {
+    outline: none;
+}
+.ticket-price {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%; /* Чтобы кнопка заполняла высоту блока */
+}
+table {
+    width: 100%;
+}
+.dropdown-menu.show {
+    font-size: 25px;
+}
+.dropdown-menu.show  {
+    width: 100%;
+}

@@ -1,0 +1,22 @@
+body {
+    font-size: 30px
+}
+.con31 {
+    display: inline-block;
+    /*background-color: rgba(200, 140, 209, 1);*/
+}
+.con31>img {
+    width: 250px;
+    height: 150px;
+}
+.con31>p {
+    display: flex;
+    justify-content: left;
+}
+span {
+    color: rgba(160, 95, 171, 1);
+    font-size: 3rem;
+}
+.col-6 {
+    text-align: center;
+}

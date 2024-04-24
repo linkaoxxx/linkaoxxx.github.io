@@ -1,0 +1,25 @@
+body {
+  font-family: 'Attentica 4F', sans-serif;
+  font-size: 30px;
+  background: linear-gradient(0deg, rgba(160, 95, 171, 1) 0%, rgba(255, 255, 255, 1) 100%) !important;
+}
+
+.btn-purple {
+  color: #fff;
+  background-color: rgba(235, 189, 242, 1);
+  border-color: rgba(235, 189, 242, 1);
+  font-size: 1.5rem;
+}
+
+.btn-purple:hover {
+  color: #fff;
+  background-color: rgba(130, 75, 141, 1);
+  border-color: rgba(130, 75, 141, 1);
+}
+
+.text-primary {
+  color: blueviolet !important;
+}
+.form-control {
+  font-size: 1.5rem;
+}

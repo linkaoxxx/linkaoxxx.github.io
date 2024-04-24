@@ -1,0 +1,29 @@
+body {
+    background: linear-gradient(0deg, rgba(160, 95, 171, 1) 0%, rgba(255, 255, 255, 1) 100%);
+    /*background-color: rgba(235, 189, 242, 1);*/
+    font-family: 'Attentica 4F', sans-serif;
+    font-size: 30px;
+}
+#navbarNavDropdown {
+    justify-content: right;
+}
+.nav-item>a {
+    color:rgba(160, 95, 171, 1);
+}
+.navbar-brand>img {
+    height: 40px;
+}
+.navbar .navbar-toggler-icon {
+    opacity: 1;
+    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba(160, 95, 171, 1)' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E"); 
+    }
+.header-title {
+    color: rgba(160, 95, 171, 1);
+    margin-top: 1em;
+    font-size: 3rem;
+    margin-left: 2rem;
+    -webkit-text-stroke: 0.5px white;
+}
+.dropdown-item:hover {
+    cursor: pointer;
+}

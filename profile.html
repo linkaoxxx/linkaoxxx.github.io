@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Profile</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="static/styles/profile.css">
+  <link href="static/styles/navatyle.css" rel="stylesheet">
+
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="/.html">
+        <img src="static/images/NEBO.png" alt="NEBO" height="24">
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNavDropdown">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" href="tickets.html">Билеты</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="shedule.html">Расписание рейсов</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="aboutus.html">О нас</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="log.html">Личный кабинет</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <div class="container mt-5"> <!-- Добавление отступа сверху -->
+    <div class="row">
+      <div class="col-md-6">
+        <!-- Левая часть с профилем пользователя и текстом о билетах -->
+        <div class="text-center">
+          <img src="static/images/profile.JPG" alt="Profile Picture" class="profile-picture mb-3">
+          <h4>Алина Поливанова</h4>
+          <p>Прогресс:</p>
+          <div class="progress">
+            <div class="progress-bar" role="progressbar" style="width: 30%;" aria-valuenow="30" aria-valuemin="0" aria-valuemax="100">30%</div>
+          </div>
+          <p class="mt-2">Уровень накопления миль: 7 (300/1000)</p>
+          <!-- Кнопка "Загрузить фото профиля" -->
+          <button class="btn btn-primary">Загрузить фото профиля</button>
+          <!-- Текст о билетах -->
+          <div class="text-center mt-4 ticket-info">
+            <h5>Тут будут ваши активные билеты</h5>
+          </div>
+          <!-- Окно "ваш архив билетов" -->
+          <div class="text-center mt-4 ticket-info">
+            <h5>Тут будет ваш архив билетов</h5>
+          </div>
+
+        </div>
+      </div>
+      <div class="col-md-6">
+        <!-- Правая часть с формой заполнения -->
+        <form id="profileForm">
+          <div class="mb-3">
+            <label for="firstName" class="form-label">Имя</label>
+            <input type="text" class="form-control" id="firstName" name="firstName">
+          </div>
+          <div class="mb-3">
+            <label for="lastName" class="form-label">Фамилия</label>
+            <input type="text" class="form-control" id="lastName" name="lastName">
+          </div>
+          <div class="mb-3">
+            <label for="patronymic" class="form-label">Отчество</label>
+            <input type="text" class="form-control" id="patronymic" name="patronymic">
+          </div>
+          <!-- Поле для выбора гражданства -->
+          <div class="mb-3">
+            <label for="citizenship" class="form-label">Гражданство</label>
+            <select class="form-select" id="citizenship" name="citizenship">
+              <option value="Russia">Российская Федерация</option>
+              <option value="Kazakhstan">Казахстан</option>
+              <option value="Turkmenistan">Туркмения</option>
+              <option value="Azerbaijan">Азербайджан</option>
+              <option value="Tadjikistan">Таджикистан</option>
+              <option value="Kyrgyzstan">Киргизия</option>
+              <option value="Armenia">Армения</option>
+              <option value="Uzbekistan">Узбекистан</option>
+              <option value="Belarus">Республика Беларусь</option>
+              <option value="Moldova">Молдавия</option>
+              <!-- Остальные варианты гражданства здесь -->
+            </select>
+          </div>
+          <!-- Поле для выбора валюты -->
+          <div class="mb-3">
+            <label for="currency" class="form-label">Валюта</label>
+            <select class="form-select" id="currency" name="currency">
+              <option value="ruble">Рубль</option>
+              <option value="tenge">Тенге</option>
+              <option value="TM">Туркменский Манат</option>
+              <option value="AM">Азербайджанский Манат</option>
+              <option value="somoni">Сомони</option>
+              <option value="KS">Киргизский Сом</option>
+              <option value="AD">Армянский Драм</option>
+              <option value="US">Узбекский Сум</option>
+              <option value="BR">Белорусский Рубль</option>
+              <option value="ML">Молдавский Лей</option>
+              <!-- Здесь будут варианты валют, обновляемые JavaScript-ом -->
+            </select>
+          </div>
+          <button type="submit" class="btn btn-primary">Сохранить данные</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const citizenshipSelect = document.getElementById('citizenship');
+    const currencySelect = document.getElementById('currency');
+
+    // Объект с данными о валютах для разных стран
+    const data = {
+      'Russia': {
+        currencies: ['Рубль']
+      },
+      'Kazakhstan': {
+        currencies: ['Тенге','Рубль']
+      },
+      'Turkmenistan': {
+      currencies: ['Туркменский Манат','Рубль']
+      },
+      'Azerbaijan': {
+        currencies: ['Азербайджанский Манат','Рубль']
+      },
+      'Tadjikistan': {
+        currencies: ['Сомони','Рубль']
+      },
+      'Kyrgyzstan': {
+        currencies: ['Киргизский Сом','Рубль']
+      },
+      'Armenia': {
+        currencies: ['Армянский Драм','Рубль']
+      },
+      'Uzbekistan': {
+        currencies: ['Узбекский Сум','Рубль']
+      },
+      'Belarus': {
+        currencies: ['Белорусский Рубль','Рубль']
+      },
+      'Moldova': {
+        currencies: ['Молдавский Лей','Рубль']
+      },
+      // Другие страны здесь
+    };
+
+    // Функция для обновления списка валют
+    function updateCurrencies() {
+      const selectedCitizenship = citizenshipSelect.value;
+      const currencies = data[selectedCitizenship].currencies;
+      currencySelect.innerHTML = '';
+      currencies.forEach(currency => {
+        const option = document.createElement('option');
+        option.textContent = currency;
+        currencySelect.appendChild(option);
+      });
+    }
+
+    // Вызов функции при изменении выбора гражданства
+    citizenshipSelect.addEventListener('change', () => {
+      updateCurrencies();
+    });
+
+    // Инициализация при загрузке страницы
+    updateCurrencies();
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,56 @@
+
+body {
+    background: linear-gradient(0deg, rgba(160, 95, 171, 1) 0%, rgba(255, 255, 255, 1) 100%);
+    font-family: 'Attentica 4F', sans-serif;
+    font-size: 30px;
+}
+.container {
+    margin-top: 50px;
+    padding: 20px;
+  }
+
+  .profile-picture {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  
+  .progress-bar {
+    height: 20px;
+    background-color:rgba(160, 95, 171, 1);
+    font-size: 18px;
+  }
+  
+  .btn-primary {
+    background-color: rgba(235, 189, 242, 1);
+    border-color: rgba(235, 189, 242, 1);
+    font-size: 2rem; 
+  }
+  
+  .btn-primary:hover {
+    background-color: rgba(160, 95, 171, 1);
+    border-color: rgba(160, 95, 171, 1);
+  }
+
+
+.form-control {
+    font-size: 1.5rem; 
+  }
+
+.form-select {
+    font-size: 1.5rem; 
+  }
+
+/* Новые стили для окон с билетами */
+.ticket-info {
+  margin-top: 20px; /* Отступ сверху */
+  padding: 10px; /* Внутренний отступ */
+  background-color: #f8f9fa; /* Цвет фона */
+  border: 1px solid #dee2e6; /* Граница */
+  border-radius: 5px; /* Скругление углов */
+  font-size: 1.5rem; /* Размер шрифта */
+}
+h5 {
+  font-size: 1.5rem;
+}
