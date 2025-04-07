@@ -1,0 +1,9 @@
+[
+  { "model": "routes.dayofweek", "pk": 1, "fields": { "name": "Понедельник" } },
+  { "model": "routes.dayofweek", "pk": 2, "fields": { "name": "Вторник" } },
+  { "model": "routes.dayofweek", "pk": 3, "fields": { "name": "Среда" } },
+  { "model": "routes.dayofweek", "pk": 4, "fields": { "name": "Четверг" } },
+  { "model": "routes.dayofweek", "pk": 5, "fields": { "name": "Пятница" } },
+  { "model": "routes.dayofweek", "pk": 6, "fields": { "name": "Суббота" } },
+  { "model": "routes.dayofweek", "pk": 7, "fields": { "name": "Воскресенье" } }
+]

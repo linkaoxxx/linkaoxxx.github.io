@@ -1,0 +1,111 @@
+body {
+  background: linear-gradient(0deg, rgba(160, 95, 171, 1) 0%, rgba(255, 255, 255, 1) 100%);
+  font-family: 'Attentica 4F', sans-serif;
+  font-size: 30px;
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+h1 {
+  text-align: center;
+}
+
+
+.seat-row {
+  display: flex;
+  margin-bottom: 10px;
+}
+
+.seat {
+  width: 30px;
+  height: 30px;
+  margin-right: 10px;
+  background-color: rgba(235, 189, 242, 1); /* Свободное место */
+  border: 1px solid #ccc;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 5px;
+  cursor: pointer;
+}
+
+.corridor {
+  width: 20px;
+}
+
+.seat.selected {
+  background-color: rgba(160, 95, 171, 1); /* Выбранное место */
+}
+
+.seat:hover:not(.selected) {
+  background-color: #535353; /* Наведение на место */
+}
+
+.legend {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 5px;
+  margin: 1.5rem;
+  margin-top: 0%;
+  margin-bottom: auto;
+}
+
+.legend h2 {
+  margin-top: 0;
+  font-size: 2rem;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.legend-item .color {
+  width: 20px;
+  height: 20px;
+  margin-right: 10px;
+  border-radius: 50%;
+}
+
+.legend-item .label {
+  font-size: 16px;
+}
+.seats-container {
+  display: flex;
+  justify-content: space-between;
+}
+.color {
+  width: 20px;
+  height: 20px;
+  margin-right: 10px;
+}
+.label {
+  font-size: 18px;
+}
+.legend-item .label {
+  font-size: 1.5rem; /* Увеличение размера шрифта для надписей в легенде */
+}
+.buy-ticket {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.buy-ticket .btn-primary {
+  background-color: rgba(160, 95, 171, 1); /* фиолетовый цвет */
+  color: #fff; /* белый цвет текста */
+  font-family: 'Attentica 4F', sans-serif;
+  font-size: 1.5rem;
+  border-radius: 10%;
+  border-color: rgba(160, 95, 171, 1);
+}

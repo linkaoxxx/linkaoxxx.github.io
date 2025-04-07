@@ -1,0 +1,8 @@
+[
+  { "model": "routes.city", "pk": 1, "fields": { "name": "Москва" } },
+  { "model": "routes.city", "pk": 2, "fields": { "name": "Санкт-Петербург" } },
+  { "model": "routes.city", "pk": 3, "fields": { "name": "Казань" } },
+  { "model": "routes.city", "pk": 4, "fields": { "name": "Нижний Новгород" } },
+  { "model": "routes.city", "pk": 5, "fields": { "name": "Калининград" } },
+  { "model": "routes.city", "pk": 6, "fields": { "name": "Саратов" } }
+]

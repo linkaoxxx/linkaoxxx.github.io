@@ -1,0 +1,375 @@
+{% load static %}
+
+{% comment %} http://127.0.0.1:8000/admin/ {% endcomment %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEBO(Home)</title>
+    <link href="https://fonts.cdnfonts.com/css/attentica-4f" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href='{% static "styles/home.css" %}'>
+    <link rel="stylesheet" href='{% static "styles/search.css" %}'>
+    <link href='{% static "styles/navatyle.css" %}' rel="stylesheet">
+    <link rel="icon" type="image/x-icon" href='{% static "images/favicon.ico" %}'>
+
+    
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg">
+        <div class="container-fluid">
+          <a class="navbar-brand" href='{% url "main:home" %}'>
+            <img src='{% static "images/NEBO.png" %}' alt="NEBO" height="24">
+          </a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarNavDropdown">
+            <ul class="navbar-nav">
+              <li class="nav-item">
+                <a class="nav-link" href='{% url "routes:index" %}'>Билеты</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href='{% url "main:shedule" %}'>Расписание рейсов</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href='{% url "main:aboutus" %}'>О нас</a>
+              </li>
+              {% if not user.is_authenticated %}
+                <li class="nav-item">
+                  <a class="nav-link" href='{% url "users:login" %}'>Войти</a>
+              </li>
+              {% else %}
+                <li class="nav-item dropdown ">
+                  <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"> Мой профиль</a>
+                  <ul class="dropdown-menu">
+                      <li><a class="dropdown-item" href='{% url "users:profile" %}'>Личный кабинет</a></li>
+                      <li><a class="dropdown-item" href='{% url "users:logout" %}'>Выйти</a></li>
+                  </ul>
+              </li>
+              {% endif %}
+        </ul>
+          </div>
+        </div>
+      </nav>
+      
+    <div>
+      <h2 class="header-title">Поиск билетов</h2>
+    </div>
+
+    <div class="container text-center" id="cont">
+      <div class="row">
+          <div class="col">
+              <div class="dropdown">
+                  <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                      <span id="selected-option1">Откуда</span>
+                  </button>
+                  <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                      {% for town in cities %}
+                          <li>
+                              <div class="dropdown-item" onclick="selectOption(this, 1)">
+                                  <span>{{town.name}}</span>
+                              </div>
+                          </li>
+                      {% endfor %}
+                  </ul>
+              </div>
+          </div>
+
+          <div class="col">
+              <div class="dropdown">
+                  <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton2" data-bs-toggle="dropdown" aria-expanded="false">
+                      <span id="selected-option2">Куда</span>
+                  </button>
+                  <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton2">
+                      {% for town in cities %}
+                          <li>
+                              <div class="dropdown-item" onclick="selectOption(this, 2)">
+                                  <span>{{town.name}}</span>
+                              </div>
+                          </li>
+                      {% endfor %}
+                  </ul>
+              </div>
+          </div>
+
+          <div class="col">
+              <input type="text" id="datepicker" placeholder="Выберите дату">
+          </div>
+
+          <div class="col">
+            <div class="dropdown">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton3" data-bs-toggle="dropdown" aria-expanded="false">
+                    <span id="selected-option3">Количество пассажиров</span>
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton3">
+                    <li>
+                        <div class="dropdown-item">
+                            <span>Взрослые</span>
+                            <input type="number" class="form-control" value="1" min="1" max="10" name="adult" onchange="selectOption(this.parentElement, 3)">
+                        </div>
+                    </li>
+                    <li>
+                        <div class="dropdown-item">
+                            <span>Дети</span>
+                            <input type="number" class="form-control" value="0" min="0" max="8" name="child" onchange="selectOption(this.parentElement, 3)">
+                        </div>
+                    </li>
+                    <li>
+                        <div class="dropdown-item">
+                            <span>Животные</span>
+                            <input type="number" class="form-control" value="0" min="0" max="3" name="pet" onchange="selectOption(this.parentElement, 3)">
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+          <div class="col">
+              <div class="input-group">
+                <button type="button" id="searchButton" class="btn" data-mdb-ripple-init>Поиск билетов<i class="fas fa-search"></i></button>
+              </div>
+          </div>
+      </div>
+  </div>
+
+    <div>
+      <h2 class="header-title">Популярные маршруты</h2>
+    </div>
+
+    <div id="carouselExampleControls" class="carousel">
+      <div class="carousel-inner">
+          <div class="carousel-item active">
+              <div class="card">
+                  <div class="img-wrapper"><img src='{% static "images/saratov.jpg" %}' class="d-block w-100" alt="Саратов"> </div>
+                  <div class="card-body">
+                      <h5 class="card-title">Саратов</h5>
+                      <p class="card-text">Свято-Троицкий Собор</p>
+                      <a href="#" class="btn btn-primary">2 500 &#x20bd;</a>
+                  </div>
+              </div>
+          </div>
+          <div class="carousel-item">
+              <div class="card">
+                  <div class="img-wrapper"><img src='{% static "images/moscow.jpg" %}' class="d-block w-100" alt="Москва"> </div>
+                  <div class="card-body">
+                      <h5 class="card-title">Москва</h5>
+                      <p class="card-text">Moscow-City</p>
+                      <a href="#" class="btn btn-primary">3 000 &#x20bd;</a>
+                  </div>
+              </div>
+          </div>
+          <div class="carousel-item">
+              <div class="card">
+                  <div class="img-wrapper"><img src='{% static "images/sp.jpg" %}' class="d-block w-100" alt="Санкт-Петербург"> </div>
+                  <div class="card-body">
+                      <h5 class="card-title">Санкт-Петербург</h5>
+                      <p class="card-text">Разводные мосты</p>
+                      <a href="#" class="btn btn-primary">3 700 &#x20bd;</a>
+                  </div>
+              </div>
+          </div>
+          <div class="carousel-item">
+              <div class="card">
+                  <div class="img-wrapper"><img src='{% static "images/kazan.jpg" %}' class="d-block w-100" alt="Казань"> </div>
+                  <div class="card-body">
+                      <h5 class="card-title">Казань</h5>
+                      <p class="card-text">Мечеть «Кул-Шариф»</p>
+                      <a href="#" class="btn btn-primary">3 500 &#x20bd;</a>
+                  </div>
+              </div>
+          </div>
+          <div class="carousel-item">
+              <div class="card">
+                  <div class="img-wrapper"><img src='{% static "images/nn.jpg" %}' class="d-block w-100" alt="Нижний Новгород"> </div>
+                  <div class="card-body">
+                      <h5 class="card-title">Нижний Новгород</h5>
+                      <p class="card-text">Чкаловская лестница</p>
+                      <a href="#" class="btn btn-primary">3 700 &#x20bd;</a>
+                  </div>
+              </div>
+          </div>
+          <div class="carousel-item">
+              <div class="card">
+                  <div class="img-wrapper"><img src='{% static "images/kaliningrad.jpg" %}' class="d-block w-100" alt="Калининград"> </div>
+                  <div class="card-body">
+                      <h5 class="card-title">Калининград</h5>
+                      <p class="card-text">Руины Королевского замка</p>
+                      <a href="#" class="btn btn-primary">5 000 &#x20bd;</a>
+                  </div>
+              </div>
+          </div>
+      </div>
+      <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+    </button>
+    </div>
+    
+
+    <!-- Подключаем скрипты -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/pickadate/lib/picker.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/pickadate/lib/picker.date.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/pickadate/lib/translations/ru_RU.js"></script>
+
+    <script>
+      function selectOption(option, listNumber) {
+  const selectedOptionText = option.querySelector('span').textContent;
+  const selectedOptionElement = document.getElementById('selected-option' + listNumber);
+  
+  // Если элемент выбранного option имеет дочерний элемент input, то берем значение из input
+  const inputElement = option.querySelector('input');
+  const selectedOptionCount = inputElement ? inputElement.value : null;
+  
+  // Формируем текст для кнопки
+  let buttonText = selectedOptionText;
+  if (selectedOptionCount !== null) {
+    buttonText += ` (${selectedOptionCount})`;
+  }
+  
+  // Обновляем текст кнопки
+  selectedOptionElement.textContent = buttonText;
+
+  // Обновляем текст кнопки после установки выбранного значения
+  updateSelectedOption(listNumber);
+}
+
+    </script>
+
+    <script>
+      // Инициализация календаря
+      $(document).ready(function(){
+        const $datepicker = $('#datepicker').pickadate({
+          format: 'dd.mm.yyyy', // Формат даты
+          monthsFull: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
+          monthsShort: ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'],
+          weekdaysFull: ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'],
+          weekdaysShort: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
+          today: 'Сегодня',
+          clear: 'Очистить',
+          close: 'Закрыть',
+          closeOnSelect: true, // Закрывать календарь после выбора даты
+          onClose: function() {
+            // При закрытии календаря скрываем его
+            $('.picker').hide();
+          }
+        });
+
+        // Обработчик события клика на поле ввода даты
+        $('#datepicker').on('click', function() {
+          // Проверяем, видимо ли в данный момент календарь
+          const isVisible = $('.picker').is(':visible');
+
+          // Если календарь видим, скрываем его, иначе показываем
+          if (isVisible) {
+            $('.picker').hide();
+          } else {
+            $('.picker').show();
+          }
+        });
+      });
+
+      $(document).ready(function(){
+        // Здесь ваш текущий код инициализации календаря
+
+        // Обработчик выбора даты
+        $('#datepicker').on('change', function() {
+            const selectedDate = this.value; // Получаем выбранную пользователем дату
+            const selectedDayOfWeek = new Date(selectedDate).getDay(); // Определяем день недели для выбранной даты (0 - Воскресенье, 1 - Понедельник, и т.д.)
+
+            // Отправляем на сервер день недели для фильтрации рейсов
+            $.ajax({
+                url: '/filter_flights/',
+                method: 'POST',
+                data: {
+                    selected_day_of_week: selectedDayOfWeek
+                },
+                success: function(response) {
+                    // Обработка успешного ответа от сервера и отображение результатов на странице
+                },
+                error: function(xhr, status, error) {
+                    // Обработка ошибки запроса
+                }
+            });
+        });
+    });
+    </script>
+
+    <script>
+      // Карусель для мобильных устройств
+      var multipleCardCarousel = document.querySelector("#carouselExampleControls");
+      if (window.matchMedia("(min-width: 768px)").matches) {
+        var carousel = new bootstrap.Carousel(multipleCardCarousel, { interval: false });
+        var carouselWidth = $(".carousel-inner")[0].scrollWidth;
+        var cardWidth = $(".carousel-item").width();
+        var scrollPosition = 0;
+        $("#carouselExampleControls .carousel-control-next").on("click", function () {
+          if (scrollPosition < carouselWidth - cardWidth * 4) {
+            scrollPosition += cardWidth;
+            $("#carouselExampleControls .carousel-inner").animate({ scrollLeft: scrollPosition }, 600);
+          }
+        });
+        $("#carouselExampleControls .carousel-control-prev").on("click", function () {
+          if (scrollPosition > 0) {
+            scrollPosition -= cardWidth;
+            $("#carouselExampleControls .carousel-inner").animate({ scrollLeft: scrollPosition }, 600);
+          }
+        });
+      } else {
+        $(multipleCardCarousel).addClass("slide");
+      }
+    </script>
+
+    <script>
+      $(document).ready(function() {
+          // Очищаем локальное хранилище при загрузке страницы
+          localStorage.removeItem('searchParams');
+          
+          $('#searchButton').click(function() {
+              // Получаем значения выбранных опций
+              var from = $('#selected-option1').text().trim();
+              var to = $('#selected-option2').text().trim();
+              var date = $('#datepicker').val();
+              var adultCount = $('input[name="adult"]').val();
+              var childCount = $('input[name="child"]').val();
+              var petCount = $('input[name="pet"]').val();
+              
+              // Формируем URL для перенаправления с параметрами поиска
+              var url = '/routes/?from=' + from + '&to=' + to + '&date=' + date + '&adult=' + adultCount + '&child=' + childCount + '&pet=' + petCount;
+              
+              // Сохраняем значения в локальное хранилище
+              localStorage.setItem('searchParams', JSON.stringify({
+                  from: from,
+                  to: to,
+                  date: date,
+                  adult: adultCount,
+                  child: childCount,
+                  pet: petCount
+              }));
+              
+              // Перенаправляем пользователя на страницу с результатами поиска
+              window.location.href = url;
+          });
+          
+          // Восстанавливаем значения полей формы при загрузке страницы
+          var searchParams = JSON.parse(localStorage.getItem('searchParams'));
+          if (searchParams) {
+              $('#selected-option1').text(searchParams.from);
+              $('#selected-option2').text(searchParams.to);
+              $('#datepicker').val(searchParams.date);
+              $('input[name="adult"]').val(searchParams.adult);
+              $('input[name="child"]').val(searchParams.child);
+              $('input[name="pet"]').val(searchParams.pet);
+          }
+      });
+  </script>
+</body>
+</html>
