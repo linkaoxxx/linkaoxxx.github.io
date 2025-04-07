@@ -1,0 +1,243 @@
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Passenger Form</title>
+    <link rel="icon" type="image/x-icon" href='{% static "images/favicon.ico" %}'>
+    <link href="https://fonts.cdnfonts.com/css/attentica-4f" rel="stylesheet">
+    
+    <style>
+        .seat-selector-container {
+            margin-bottom: 10px;
+        }
+        body {
+            background: linear-gradient(0deg, rgba(160, 95, 171, 1) 0%, rgba(255, 255, 255, 1) 100%);
+            font-family: 'Attentica 4F', sans-serif;
+            font-size: 30px;
+          }
+          .container {
+            margin-top: 50px;
+            padding: 20px;
+          }
+          .btn-primary {
+            background-color: rgba(235, 189, 242, 1);
+            border-color: rgba(235, 189, 242, 1);
+            font-size: 2rem; 
+          }
+          .btn-primary:hover {
+            background-color: rgba(160, 95, 171, 1);
+            border-color: rgba(160, 95, 171, 1);
+          }
+          .form-control {
+            font-size: 1.5rem; 
+          }
+          .form-select {
+            font-size: 1.5rem; 
+          }
+          .seat-selector {
+            font-family: 'Attentica 4F', sans-serif;
+            font-size: 1.5rem; /* вы можете изменить размер шрифта по своему усмотрению */
+        }
+        
+    </style>
+    <script>
+        // Function to get URL parameters
+        function getUrlParameter(name) {
+            name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+            const regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+            const results = regex.exec(location.search);
+            return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+        }
+
+        // Function to show forms based on URL parameters
+        function showForms() {
+            const adultCount = parseInt(getUrlParameter('adult')) || 0;
+            const childCount = parseInt(getUrlParameter('child')) || 0;
+            const petCount = parseInt(getUrlParameter('pet')) || 0;
+
+            const adultContainer = document.getElementById('adult-forms');
+            const childContainer = document.getElementById('child-forms');
+            const petContainer = document.getElementById('pet-forms');
+
+            for (let i = 0; i < adultCount; i++) {
+                const form = document.getElementById('adult-form-template').cloneNode(true);
+                form.style.display = 'block';
+                form.id = `adult-form-${i}`;
+                adultContainer.appendChild(form);
+            }
+
+            for (let i = 0; i < childCount; i++) {
+                const form = document.getElementById('child-form-template').cloneNode(true);
+                form.style.display = 'block';
+                form.id = `child-form-${i}`;
+                childContainer.appendChild(form);
+            }
+
+            for (let i = 0; i < petCount; i++) {
+                const form = document.getElementById('pet-form-template').cloneNode(true);
+                form.style.display = 'block';
+                form.id = `pet-form-${i}`;
+                petContainer.appendChild(form);
+            }
+        }
+
+        function fetchSeats() {
+            return fetch('/routes/get_user_seat_assignments/')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.error) {
+                        console.error('Server error:', data.error);
+                        return [];
+                    }
+                    return data.seats;
+                })
+                .catch(error => {
+                    console.error('Error fetching seat data:', error);
+                    return [];
+                });
+        }
+
+        function submitAssignments() {
+            const bookingDetailURL = '/routes/booking_detail/1/';
+            
+            // Выполняем переход на страницу booking_detail
+            window.location.href = bookingDetailURL;
+        }
+
+        // Function to create seat assignment selectors based on passenger types
+        function createSeatAssignmentSelectors(adultCount, childCount, petCount) {
+            const passengerTypes = [];
+            for (let i = 0; i < adultCount; i++) passengerTypes.push('Adult');
+            for (let i = 0; i < childCount; i++) passengerTypes.push('Child');
+            for (let i = 0; i < petCount; i++) passengerTypes.push('Pet');
+
+            const seatAssignmentContainer = document.getElementById('seat-assignment');
+            seatAssignmentContainer.innerHTML = ''; // Clear container before filling
+
+            fetchSeats().then(seatData => {
+                passengerTypes.forEach((type, index) => {
+                    const selectorDiv = document.createElement('div');
+                    selectorDiv.className = 'seat-selector-container';
+                    let options = seatData.map(seat => `<option value="${seat.row}${seat.seat}">Ряд ${seat.row} Место ${seat.seat}</option>`).join('');
+                    selectorDiv.innerHTML = `
+                        <label>${type} ${index + 1}:</label>
+                        <select id="${type.toLowerCase()}-${index + 1}-seat" class="seat-selector" name="seat">
+                            ${options}
+                        </select>
+                    `;
+                    seatAssignmentContainer.appendChild(selectorDiv);
+                });
+            });
+        }
+
+        // Function to handle document load event
+        function onDocumentLoad() {
+            showForms();
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const adultCount = parseInt(urlParams.get('adult')) || 0;
+            const childCount = parseInt(urlParams.get('child')) || 0;
+            const petCount = parseInt(urlParams.get('pet')) || 0;
+
+            createSeatAssignmentSelectors(adultCount, childCount, petCount);
+        }
+    
+        document.addEventListener('DOMContentLoaded', onDocumentLoad);
+    </script>
+    
+</head>
+<body>
+    <h1>Добавить пассажира</h1>
+
+    <div id="adult-forms"></div>
+    <div id="child-forms"></div>
+    <div id="pet-forms"></div>
+
+    <!-- Adult form template -->
+    <form id="adult-form-template" style="display:none;">
+        {% csrf_token %}
+        <h2>Взрослый пассажир</h2>
+        <label for="adult-name">Имя:</label>
+        <input type="text" id="adult-name" name="name" required><br>
+        <label for="adult-surname">Фамилия:</label>
+        <input type="text" id="adult-surname" name="surname" required><br>
+        <label for="adult-patronymic">Отчество:</label>
+        <input type="text" id="adult-patronymic" name="patronymic"><br>
+        <label for="adult-document_type">Тип документа:</label>
+        <input type="text" id="adult-document_type" name="document_type" required><br>
+        <label for="adult-passport_series">Серия паспорта:</label>
+        <input type="text" id="adult-passport_series" name="passport_series"><br>
+        <label for="adult-passport_number">Номер паспорта:</label>
+        <input type="text" id="adult-passport_number" name="passport_number"><br>
+        <label for="adult-foreign_passport_series">Серия загранпаспорта:</label>
+        <input type="text" id="adult-foreign_passport_series" name="foreign_passport_series"><br>
+        <label for="adult-foreign_passport_number">Номер загранпаспорта:</label>
+        <input type="text" id="adult-foreign_passport_number" name="foreign_passport_number"><br>
+        <label for="adult-has_luggage_10kg">Багаж до 10 кг (+500 рублей):</label>
+        <input type="checkbox" id="adult-has_luggage_10kg" name="has_luggage_10kg"><br>
+        <label for="adult-has_luggage_20kg">Багаж до 20 кг (+1500 рублей):</label>
+        <input type="checkbox" id="adult-has_luggage_20kg" name="has_luggage_20kg"><br>
+        <button type="submit" style="background-color: rgba(160, 95, 171, 1); color: white; border-color: rgba(160, 95, 171, 1); font-size: 30px; font-family: 'Attentica 4F', sans-serif; border-radius: 0.25rem; padding: 10px 20px; text-align: center; display: inline-block;">Сохранить взрослого пассажира</button>
+    </form>
+
+    <!-- Child form template -->
+    <form id="child-form-template" style="display:none;">
+        {% csrf_token %}
+        <h2>Ребенок</h2>
+        <label for="child-name">Имя:</label>
+        <input type="text" id="child-name" name="name"><br>
+        <label for="child-surname">Фамилия:</label>
+        <input type="text" id="child-surname" name="surname"><br>
+        <label for="child-patronymic">Отчество:</label>
+        <input type="text" id="child-patronymic" name="patronymic"><br>
+        <label for="child-document_type">Тип документа:</label>
+        <input type="text" id="child-document_type" name="document_type"><br>
+        <label for="child-passport_series">Серия паспорта:</label>
+        <input type="text" id="child-passport_series" name="passport_series"><br>
+        <label for="child-passport_number">Номер паспорта:</label>
+        <input type="text" id="child-passport_number" name="passport_number"><br>
+        <label for="child-birth_certificate_series">Серия свидетельства о рождении:</label>
+        <input type="text" id="child-birth_certificate_series" name="birth_certificate_series"><br>
+        <label for="child-birth_certificate_number">Номер свидетельства о рождении:</label>
+        <input type="text" id="child-birth_certificate_number" name="birth_certificate_number"><br>
+        <label for="child-foreign_passport_series">Серия загранпаспорта:</label>
+        <input type="text" id="child-foreign_passport_series" name="foreign_passport_series"><br>
+        <label for="child-foreign_passport_number">Номер загранпаспорта:</label>
+        <input type="text" id="child-foreign_passport_number" name="foreign_passport_number"><br>
+        <label for="child-has_luggage_10kg">Багаж до 10 кг (+500 рублей):</label>
+        <input type="checkbox" id="child-has_luggage_10kg" name="has_luggage_10kg"><br>
+        <label for="child-has_luggage_20kg">Багаж до 20 кг (+1500 рублей):</label>
+        <input type="checkbox" id="child-has_luggage_20kg" name="has_luggage_20kg"><br>
+        <button type="submit">Сохранить ребенка</button>
+    </form>
+
+    <!-- Pet form template -->
+    <form id="pet-form-template" style="display:none;">
+        {% csrf_token %}
+        <h2>Питомец</h2>
+        <label for="pet-species">Вид:</label>
+        <input type="text" id="pet-species" name="species"><br>
+        <label for="pet-name">Имя:</label>
+        <input type="text" id="pet-name" name="name"><br>
+        <label for="pet-breed">Порода:</label>
+        <input type="text" id="pet-breed" name="breed"><br>
+        <label for="pet-vet_passport_number">Номер ветеринарного паспорта:</label>
+        <input type="text" id="pet-vet_passport_number" name="vet_passport_number"><br>
+        <label for="pet-vaccination_certificate_number">Номер сертификата о вакцинации:</label>
+        <input type="text" id="pet-vaccination_certificate_number" name="vaccination_certificate_number"><br>
+        <button type="submit">Сохранить питомца</button>
+    </form>
+
+    <h1>Соотнесение мест и пассажиров</h1>
+    <div id="seat-assignment" style="background-color: rgba(160, 95, 171, 1); color: white; border-color: rgba(160, 95, 171, 1); font-size: 30px; font-family: 'Attentica 4F', sans-serif; border-radius: 0.25rem; padding: 10px 20px; text-align: center; display: inline-block;"></div>
+
+    <button type="button" onclick="submitAssignments()" style="background-color: rgba(160, 95, 171, 1); color: white; border-color: rgba(160, 95, 171, 1); font-size: 30px; font-family: 'Attentica 4F', sans-serif; border-radius: 0.25rem; padding: 10px 20px; text-align: center; display: inline-block;">Сохранить</button>
+</body>
+</html>

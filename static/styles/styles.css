@@ -20,3 +20,6 @@ span {
 .col-6 {
     text-align: center;
 }
+div.ticket-price .buy-ticket-btn a {
+    color: white !important;
+}

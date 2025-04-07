@@ -1,0 +1,642 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>map</title>
+  <link href="https://fonts.cdnfonts.com/css/attentica-4f" rel="stylesheet">
+  <link rel="stylesheet" href='{% static "styles/mapB.css" %}'>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link rel="icon" type="image/x-icon" href='{% static "images/favicon.ico" %}'>
+</head>
+
+<body>
+  <div class="container">
+    <h1>Flight ID: {{ flight_instance.id }}</h1>
+    <p>Departure Date: {{ flight_instance.departure_date }}</p>
+    <p>Arrival Date: {{ flight_instance.arrival_date }}</p>
+        <h1 class="text-center mb-4">Выбор места</h1>
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="seats-container">
+                    <!-- Генерация мест Sukhoi Superjet 100-->
+                    <div class="seats">
+                        <!-- Генерация мест Sukhoi Superjet 100-->
+                        {% for cabin in cabins %}
+                        <div class="seat-row" data-row="{{ cabin.row_number }}">
+                            <div class="row-number">Ряд {{ cabin.row_number }}</div>
+                            {% for seat in cabin.seats.all %}
+                                {% if seat.seat_number in takenSeats %}
+                                    <div class="seat taken" data-seat="{{ seat.seat_number }}">{{ seat.seat_number }}</div>
+                                {% else %}
+                                    <div class="seat" data-seat="{{ seat.seat_number }}">{{ seat.seat_number }}</div>
+                                {% endif %}
+                                {% if seat.seat_number == 'C' %}
+                                    <div class="corridor"></div> <!-- Добавляем коридор после места C -->
+                                {% endif %}
+                            {% endfor %}
+                            <div class="corridor"></div> <!-- Добавляем коридор после последнего места D -->
+                        </div>                        
+                    {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="legend-and-forms">
+                  <div class="legend">
+                      <h2>Обозначение</h2>
+                      <div class="legend-item">
+                          <div class="color" style="background-color: rgba(235, 189, 242, 1);"></div>
+                          <div class="label">Свободное место</div>
+                      </div>
+                      <div class="legend-item">
+                          <div class="color" style="background-color: rgba(160, 95, 171, 1);"></div>
+                          <div class="label">Выбранное место</div>
+                      </div>
+                      <div class="legend-item">
+                          <div class="color" style="background-color: #535353;"></div>
+                          <div class="label">Место при наведении</div>
+                      </div>
+                      <div class="legend-item">
+                          <div class="color" style="background-color: #ccc;"></div>
+                          <div class="label">Занятое место</div>
+                      </div>
+                  </div>
+              
+                  <div id="passenger-forms-container" style="margin-top: 20px;">
+                      <!-- Форма для взрослого пассажира -->
+                      <div class="passenger-form adult-passenger-form" style="background-color: rgba(160, 95, 171, 1); border-radius: 10px; padding: 10px; color: white;">
+                          <h4>Данные взрослого пассажира</h4>
+                          <label for="adult-name">Имя:</label>
+                          <input type="text" class="adult-name" name="adult-name"><br>
+                          <label for="adult-surname">Фамилия:</label>
+                          <input type="text" class="adult-surname" name="adult-surname"><br>
+                          <input type="checkbox" class="adult-no-patronymic-checkbox">
+                          <label for="adult-no-patronymic-checkbox">Нет отчества</label><br>
+                          <div class="patronymic-field">
+                              <label for="adult-patronymic">Отчество:</label>
+                              <input type="text" class="adult-patronymic" name="adult-patronymic"><br>
+                          </div>
+                          <!-- Выбор типа документа -->
+                          <label for="document-type">Выберите тип документа:</label>
+                          <select class="document-type" name="document-type">
+                              <option value="passport">Паспорт</option>
+                              <option value="foreign-passport">Заграничный паспорт</option>
+                          </select><br>
+  
+                          <!-- Форма для паспорта -->
+                          <div class="passport-form" style="display: none;">
+                              <label for="passport-series">Серия паспорта (6 цифр):</label>
+                              <input type="text" class="passport-series" name="passport-series" pattern="[0-9]{6}" maxlength="6"><br>
+                              <label for="passport-number">Номер паспорта (4 цифры):</label>
+                              <input type="text" class="passport-number" name="passport-number" pattern="[0-9]{4}" maxlength="4"><br>
+                          </div>
+  
+                          <!-- Форма для заграничного паспорта -->
+                          <div class="foreign-passport-form" style="display: none;">
+                              <label for="foreign-passport-series">Серия заграничного паспорта (2 цифры):</label>
+                              <input type="text" class="foreign-passport-series" name="foreign-passport-series" pattern="[0-9]{2}" maxlength="2"><br>
+                              <label for="foreign-passport-number">Номер заграничного паспорта (7 цифр):</label>
+                              <input type="text" class="foreign-passport-number" name="foreign-passport-number" pattern="[0-9]{7}" maxlength="7"><br>
+                          </div>
+  
+                          <label>
+                              <input type="checkbox" class="add-baggage" data-weight="10" data-price="500">
+                              Добавить багаж до 10 кг (500 рублей)
+                          </label>
+                          <br>
+                          <label>
+                              <input type="checkbox" class="add-baggage" data-weight="20" data-price="1500">
+                              Добавить багаж до 20 кг (1500 рублей)
+                          </label>
+                      </div>
+                  
+  
+            
+                      <!-- Форма для детского пассажира -->
+                      <div class="passenger-form child-passenger-form" style="background-color: rgba(160, 95, 171, 1); border-radius: 10px; padding: 10px; color: white;">
+                          <h4>Данные ребенка</h4>
+                          <label for="child-name">Имя:</label>
+                          <input type="text" class="child-name" name="child-name"><br>
+                          <label for="child-surname">Фамилия:</label>
+                          <input type="text" class="child-surname" name="child-surname"><br>
+                          <input type="checkbox" class="child-no-patronymic-checkbox">
+                          <label for="child-no-patronymic-checkbox">Нет отчества</label><br>
+                          <div class="patronymic-field">
+                              <label for="child-patronymic">Отчество:</label>
+                              <input type="text" class="child-patronymic" name="child-patronymic"><br>
+                          </div>
+                          <div class="form-group">
+                              <label for="child-document-type" class="text-white">Выберите тип документа:</label>
+                              <select class="child-document-type form-control">
+                                  <option value="passport">Паспорт</option>
+                                  <option value="birth-certificate">Свидетельство о рождении</option>
+                                  <option value="foreign-passport">Заграничный паспорт</option>
+                              </select>
+                          </div>
+                          <div class="child-passport-form">
+                              <div class="form-group">
+                                  <label for="child-passport-series" class="text-white">Серия паспорта:</label>
+                                  <input type="text" class="child-passport-series form-control" maxlength="6">
+                              </div>
+                              <div class="form-group">
+                                  <label for="child-passport-number" class="text-white">Номер паспорта:</label>
+                                  <input type="text" class="child-passport-number form-control" maxlength="4">
+                              </div>
+                          </div>
+                          <div class="child-birth-certificate-form" style="display: none;">
+                              <div class="form-group">
+                                  <label for="child-birth-certificate-series" class="text-white">Серия свидетельства о рождении:</label>
+                                  <input type="text" class="child-birth-certificate-series form-control" maxlength="3">
+                              </div>
+                              <div class="form-group">
+                                  <label for="child-birth-certificate-number" class="text-white">Номер свидетельства о рождении:</label>
+                                  <input type="text" class="child-birth-certificate-number form-control" maxlength="6">
+                              </div>
+                          </div>
+                          <div class="child-foreign-passport-form" style="display: none;">
+                              <div class="form-group">
+                                  <label for="child-foreign-passport-series" class="text-white">Серия заграничного паспорта (2 цифры):</label>
+                                  <input type="text" class="child-foreign-passport-series form-control" name="child-foreign-passport-series" pattern="[0-9]{2}" maxlength="2"><br>
+                              </div>
+                              <div class="form-group">
+                                  <label for="child-foreign-passport-number" class="text-white">Номер заграничного паспорта (7 цифр):</label>
+                                  <input type="text" class="child-foreign-passport-number form-control" name="child-foreign-passport-number" pattern="[0-9]{7}" maxlength="7"><br>
+                              </div>
+                          </div>
+                          <label>
+                              <input type="checkbox" class="add-baggage" data-weight="10" data-price="500">
+                              Добавить багаж для ребенка до 10 кг (500 рублей)
+                          </label>
+                          <br>
+                          <label>
+                              <input type="checkbox" class="add-baggage" data-weight="20" data-price="1500">
+                              Добавить багаж для ребенка до 20 кг (1500 рублей)
+                          </label>
+                      </div>
+            
+                      <div class="passenger-form" style="background-color: rgba(160, 95, 171, 1); border-radius: 10px; padding: 10px; color: white;">
+                          <h4>Данные пассажира-животного</h4>
+                          <label for="pet-species">Вид:</label>
+                          <input type="text" id="pet-species" name="pet-species"><br> <!-- Добавлено поле "вид" -->
+                          <label for="pet-name">Кличка:</label>
+                          <input type="text" id="pet-name" name="pet-name"><br>
+                          <label for="pet-breed">Порода:</label>
+                          <input type="text" id="pet-breed" name="pet-breed"><br>
+                          <label for="pet-vet-passport-number">Номер ветеринарного паспорта:</label>
+                          <input type="text" id="pet-vet-passport-number" name="pet-vet-passport-number"><br>
+                          <label for="pet-vaccination-certificate-number">Номер справки о прививках:</label>
+                          <input type="text" id="pet-vaccination-certificate-number" name="pet-vaccination-certificate-number"><br> <!-- Добавлено поле "номер справки о прививках" -->
+                          <!-- Другие поля для пассажира-животного -->
+                      </div>
+                  </div>
+            
+                  <!-- Флажки для выбора VIP-зала и страховки -->
+                  <div class="text-center mt-4" style="background-color: rgba(160, 95, 171, 1); border-radius: 10px; padding: 10px; color: white;">
+                      <div>
+                          <label class="checkbox-label">
+                              <input type="checkbox" id="vip" class="add-option" data-price="65000"> Выбрать VIP-зал (+65 000)
+                          </label>
+                      </div>
+                      <div>
+                          <label class="checkbox-label">
+                              <input type="checkbox" class="add-option" id="insurance"> Выбрать страховку (+1 000)
+                          </label>
+                      </div>
+                  </div>
+                  <!-- Кнопка для подсчета общей суммы к оплате -->
+                  <div class="text-center mt-4">
+                      <button type="button" class="btn btn-primary" id="total-price-btn">Итого к оплате: <span id="total-price">{{ total_price }}</span> рублей</button>
+                  </div>
+  
+                  <script>
+                      var totalPrice = parseFloat(document.getElementById('total-price').innerText.replace(/\s/g, '').replace(',', '.'));
+                      
+                      // Функция для обновления общей суммы к оплате
+                      function calculateTotal() {
+                          // Проверяем, выбраны ли какие-либо опции
+                          var vipChecked = document.getElementById('vip').checked;
+                          var insuranceChecked = document.getElementById('insurance').checked;
+                  
+                          // Проверяем, была ли опция VIP-зала уже применена
+                          if (vipChecked && !window.vipApplied) {
+                              totalPrice += 65000;
+                              window.vipApplied = true; // Устанавливаем флаг, что опция была применена
+                          } else if (!vipChecked && window.vipApplied) {
+                              totalPrice -= 65000;
+                              window.vipApplied = false; // Удаляем флаг, что опция была применена
+                          }
+                  
+                          // Проверяем, была ли опция страховки уже применена
+                          if (insuranceChecked && !window.insuranceApplied) {
+                              totalPrice += 1000;
+                              window.insuranceApplied = true; // Устанавливаем флаг, что опция была применена
+                          } else if (!insuranceChecked && window.insuranceApplied) {
+                              totalPrice -= 1000;
+                              window.insuranceApplied = false; // Удаляем флаг, что опция была применена
+                          }
+                  
+                          // Обновляем текст на кнопке
+                          document.getElementById('total-price').innerText = totalPrice.toLocaleString();
+                      }
+                  
+                      // Вызываем функцию для первоначального подсчета при загрузке страницы
+                      window.onload = function() {
+                          calculateTotal();
+                  
+                          // Добавляем обработчики событий для кнопок багажа
+                          const addBaggageCheckboxes = document.querySelectorAll('.add-baggage');
+                          addBaggageCheckboxes.forEach(checkbox => {
+                              checkbox.addEventListener('change', function() {
+                                  var baggagePrice = parseFloat(this.dataset.price);
+                  
+                                  // Если кнопка выбрана, добавляем стоимость багажа к общей сумме
+                                  if (this.checked) {
+                                      totalPrice += baggagePrice;
+                                  } else {
+                                      // Иначе, убираем стоимость багажа из общей суммы
+                                      totalPrice -= baggagePrice;
+                                  }
+                  
+                                  // Обновляем общую сумму на кнопке
+                                  document.getElementById('total-price').innerText = totalPrice.toLocaleString();
+                  
+                                  // После изменения состояния багажа, пересчитываем общую сумму
+                                  calculateTotal();
+                              });
+                          });
+                      };
+                  </script>
+                  
+                  
+                  
+                  
+                  
+  
+              </div>
+          </div>    
+      </div>
+  </div>
+      
+      <script>
+          document.addEventListener('DOMContentLoaded', function () {
+              const urlParams = new URLSearchParams(window.location.search);
+              const seats = document.querySelectorAll('.seat');
+              const selectedPassengers = parseInt(urlParams.get('passengers')) || 0;
+              const noPatronymicCheckbox = document.getElementById('no-patronymic-checkbox');
+              const patronymicField = document.getElementById('patronymic-field');
+              const documentTypeSelect = document.getElementById('document-type');
+              const passportForm = document.getElementById('passport-form');
+              const foreignPassportForm = document.getElementById('foreign-passport-form');
+              const childDocumentTypeSelect = document.getElementById('child-document-type');
+              const birthCertificateForm = document.getElementById('child-birth-certificate-form');
+              const childPassportForm = document.getElementById('child-passport-form'); // Переименовали переменную
+              const childForeignPassportForm = document.getElementById('child-foreign-passport-form'); // Добавили переменную для загранпаспорта
+              const selectedAdults = parseInt(urlParams.get('adult')) || 0;
+              const selectedChildren = parseInt(urlParams.get('child')) || 0;
+              const selectedPets = parseInt(urlParams.get('pet')) || 0;
+              const passengerFormsContainer = document.getElementById('passenger-forms-container');
+  
+              const vipCheckbox = document.getElementById('vip');
+              const insuranceCheckbox = document.getElementById('insurance');
+  
+              // Добавляем обработчики событий для изменения состояния флажков
+              vipCheckbox.addEventListener('change', function() {
+                  // При изменении состояния флажка VIP-зала вызываем функцию calculateTotal()
+                  calculateTotal();
+              });
+  
+              insuranceCheckbox.addEventListener('change', function() {
+                  // При изменении состояния флажка страховки вызываем функцию calculateTotal()
+                  calculateTotal();
+              });
+  
+                      // Проверяем, существует ли контейнер
+              if (!passengerFormsContainer) {
+                  console.error('Контейнер для форм не найден');
+                  return;
+              }
+  
+              const additionalOptions = document.createElement('div');
+              additionalOptions.classList.add('additional-options');
+              additionalOptions.innerHTML = `
+                  <!-- Флажок для VIP-зала -->
+                  <label>
+                      <input type="checkbox" class="vip-lounge" data-price="65000">
+                      VIP-зал (65000 рублей)
+                  </label>
+                  <br>
+                  <!-- Флажок для страховки от отмены поездки -->
+                  <label>
+                      <input type="checkbox" class="trip-cancellation-insurance" data-price="500">
+                      Страховка от отмены поездки (500 рублей)
+                  </label>
+                  <br>
+                  <!-- Флажок для страховки багажа -->
+                  <label>
+                      <input type="checkbox" class="baggage-insurance" data-price="300">
+                      Страховка багажа (300 рублей за каждый багаж)
+                  </label>
+              `;
+  
+              passengerFormsContainer.appendChild(additionalOptions);
+  
+              // Функция для обработки клика на месте
+              function toggleSeat() {
+                  const selectedSeats = document.querySelectorAll('.seat.selected').length;
+                  // Проверяем, не превышает ли количество выбранных мест общее количество пассажиров
+                  if (selectedSeats < selectedPassengers || this.classList.contains('selected')) {
+                      this.classList.toggle('selected');
+                  } else {
+                      alert('Можно выбрать только ' + selectedPassengers + ' мест(а)');
+                  }
+              }
+      
+      
+              // Функция для создания форм взрослых пассажиров
+              function createAdultPassengerForms(count) {
+                  for (let i = 0; i < count; i++) {
+                      const adultPassengerForm = document.createElement('div');
+                      adultPassengerForm.classList.add('passenger-form');
+  
+                      // Установка стиля для созданного элемента
+                      adultPassengerForm.style.backgroundColor = "rgba(160, 95, 171, 1)";
+                      adultPassengerForm.style.borderRadius = "10px";
+                      adultPassengerForm.style.padding = "10px";
+                      adultPassengerForm.style.color = "white";
+  
+                      adultPassengerForm.innerHTML = `
+                          <h4>Данные взрослого пассажира ${i + 1}</h4>
+                          <label for="adult-name">Имя:</label>
+                      <input type="text" class="adult-name" name="adult-name"><br>
+                      <label for="adult-surname">Фамилия:</label>
+                      <input type="text" class="adult-surname" name="adult-surname"><br>
+                      <input type="checkbox" class="adult-no-patronymic-checkbox">
+                      <label for="adult-no-patronymic-checkbox">Нет отчества</label><br>
+                      <div class="patronymic-field">
+                          <label for="adult-patronymic">Отчество:</label>
+                          <input type="text" class="adult-patronymic" name="adult-patronymic"><br>
+                      </div>
+                      <!-- Выбор типа документа -->
+                      <label for="document-type">Выберите тип документа:</label>
+                      <select class="document-type" name="document-type">
+                          <option value="passport">Паспорт</option>
+                          <option value="foreign-passport">Заграничный паспорт</option>
+                      </select><br>
+  
+                      <!-- Форма для паспорта -->
+                      <div class="passport-form" style="display: none;">
+                          <label for="passport-series">Серия паспорта (6 цифр):</label>
+                          <input type="text" class="passport-series" name="passport-series" pattern="[0-9]{6}" maxlength="6"><br>
+                          <label for="passport-number">Номер паспорта (4 цифры):</label>
+                          <input type="text" class="passport-number" name="passport-number" pattern="[0-9]{4}" maxlength="4"><br>
+                      </div>
+  
+                      <!-- Форма для заграничного паспорта -->
+                      <div class="foreign-passport-form" style="display: none;">
+                          <label for="foreign-passport-series">Серия заграничного паспорта (2 цифры):</label>
+                          <input type="text" class="foreign-passport-series" name="foreign-passport-series" pattern="[0-9]{2}" maxlength="2"><br>
+                          <label for="foreign-passport-number">Номер заграничного паспорта (7 цифр):</label>
+                          <input type="text" class="foreign-passport-number" name="foreign-passport-number" pattern="[0-9]{7}" maxlength="7"><br>
+                      </div>
+  
+                      <label>
+                          <input type="checkbox" class="add-baggage" data-weight="10" data-price="500">
+                          Добавить багаж до 10 кг (500 рублей)
+                      </label>
+                      <br>
+                      <label>
+                          <input type="checkbox" class="add-baggage" data-weight="20" data-price="1500">
+                          Добавить багаж до 20 кг (1500 рублей)
+                      </label>
+                      `;
+  
+                      // Обработчик события изменения состояния чекбокса "Нет отчества"
+                      const noPatronymicCheckbox = adultPassengerForm.querySelector('.adult-no-patronymic-checkbox');
+                      const patronymicField = adultPassengerForm.querySelector('.patronymic-field');
+                      noPatronymicCheckbox.addEventListener('change', function() {
+                          patronymicField.style.display = this.checked ? 'none' : 'block';
+                      });
+  
+                      // Обработчик события изменения типа документа
+                      const documentTypeSelect = adultPassengerForm.querySelector('.document-type');
+                      const passportForm = adultPassengerForm.querySelector('.passport-form');
+                      const foreignPassportForm = adultPassengerForm.querySelector('.foreign-passport-form');
+                      documentTypeSelect.addEventListener('change', function() {
+                          if (this.value === 'passport') {
+                              passportForm.style.display = 'block';
+                              foreignPassportForm.style.display = 'none';
+                          } else if (this.value === 'foreign-passport') {
+                              passportForm.style.display = 'none';
+                              foreignPassportForm.style.display = 'block';
+                          } else {
+                              passportForm.style.display = 'none';
+                              foreignPassportForm.style.display = 'none';
+                          }
+                      });
+  
+                      // Добавление обработчиков событий для флажков "Добавить багаж"
+                      const addBaggageCheckboxes = adultPassengerForm.querySelectorAll('.add-baggage');
+                      addBaggageCheckboxes.forEach(checkbox => {
+                          checkbox.addEventListener('change', function () {
+                              if (this.checked) {
+                                  const weight = this.dataset.weight;
+                                  const price = this.dataset.price;
+                                  console.log(`Добавлен багаж до ${weight} кг за ${price} рублей`);
+                                  // Здесь вы можете выполнить нужные действия при выборе флажка
+                              } else {
+                                  // Здесь вы можете выполнить нужные действия при снятии флажка
+                              }
+                          });
+                      });
+  
+                      passengerFormsContainer.appendChild(adultPassengerForm);
+                  }
+              }
+          
+  
+                  // Функция для создания форм детей
+                  function createChildPassengerForms(count) {
+                      for (let i = 0; i < count; i++) {
+                          const childPassengerForm = document.createElement('div');
+                          childPassengerForm.classList.add('passenger-form');
+  
+                          // Установка стиля для созданного элемента
+                          childPassengerForm.style.backgroundColor = "rgba(160, 95, 171, 1)";
+                          childPassengerForm.style.borderRadius = "10px";
+                          childPassengerForm.style.padding = "10px";
+                          childPassengerForm.style.color = "white";
+  
+                          childPassengerForm.innerHTML = `
+                              <h4>Данные ребенка ${i + 1}</h4>
+                              <label for="child-name">Имя:</label>
+                              <input type="text" class="child-name" name="child-name"><br>
+                              <label for="child-surname">Фамилия:</label>
+                              <input type="text" class="child-surname" name="child-surname"><br>
+                              <input type="checkbox" class="child-no-patronymic-checkbox">
+                              <label for="child-no-patronymic-checkbox">Нет отчества</label><br>
+                              <div class="patronymic-field">
+                                  <label for="child-patronymic">Отчество:</label>
+                                  <input type="text" class="child-patronymic" name="child-patronymic"><br>
+                              </div>
+                              <div class="form-group">
+                                  <label for="child-document-type" class="text-white">Выберите тип документа:</label>
+                                  <select class="child-document-type form-control">
+                                      <option value="passport">Паспорт</option>
+                                      <option value="birth-certificate">Свидетельство о рождении</option>
+                                      <option value="foreign-passport">Заграничный паспорт</option>
+                                  </select>
+                              </div>
+                              <div class="child-passport-form">
+                                  <div class="form-group">
+                                      <label for="child-passport-series" class="text-white">Серия паспорта:</label>
+                                      <input type="text" class="child-passport-series form-control" maxlength="6">
+                                  </div>
+                                  <div class="form-group">
+                                      <label for="child-passport-number" class="text-white">Номер паспорта:</label>
+                                      <input type="text" class="child-passport-number form-control" maxlength="4">
+                                  </div>
+                              </div>
+                              <div class="child-birth-certificate-form" style="display: none;">
+                                  <div class="form-group">
+                                      <label for="child-birth-certificate-series" class="text-white">Серия свидетельства о рождении:</label>
+                                      <input type="text" class="child-birth-certificate-series form-control" maxlength="3">
+                                  </div>
+                                  <div class="form-group">
+                                      <label for="child-birth-certificate-number" class="text-white">Номер свидетельства о рождении:</label>
+                                      <input type="text" class="child-birth-certificate-number form-control" maxlength="6">
+                                  </div>
+                              </div>
+                              <div class="child-foreign-passport-form" style="display: none;">
+                                  <div class="form-group">
+                                      <label for="child-foreign-passport-series" class="text-white">Серия заграничного паспорта (2 цифры):</label>
+                                      <input type="text" class="child-foreign-passport-series form-control" name="child-foreign-passport-series" pattern="[0-9]{2}" maxlength="2"><br>
+                                  </div>
+                                  <div class="form-group">
+                                      <label for="child-foreign-passport-number" class="text-white">Номер заграничного паспорта (7 цифр):</label>
+                                      <input type="text" class="child-foreign-passport-number form-control" name="child-foreign-passport-number" pattern="[0-9]{7}" maxlength="7"><br>
+                                  </div>
+                              </div>
+                              <label>
+                                  <input type="checkbox" class="add-baggage" data-weight="10" data-price="500">
+                                  Добавить багаж для ребенка до 10 кг (500 рублей)
+                              </label>
+                              <br>
+                              <label>
+                                  <input type="checkbox" class="add-baggage" data-weight="20" data-price="1500">
+                                  Добавить багаж для ребенка до 20 кг (1500 рублей)
+                              </label>
+                          `;
+  
+                          // Обработчик события изменения состояния чекбокса "Нет отчества"
+                          const noPatronymicCheckbox = childPassengerForm.querySelector('.child-no-patronymic-checkbox');
+                          const patronymicField = childPassengerForm.querySelector('.patronymic-field');
+                          noPatronymicCheckbox.addEventListener('change', function() {
+                              patronymicField.style.display = this.checked ? 'none' : 'block';
+                          });
+  
+                          // Обработчик события изменения типа документа
+                          const documentTypeSelect = childPassengerForm.querySelector('.child-document-type');
+                          const passportForm = childPassengerForm.querySelector('.child-passport-form');
+                          const birthCertificateForm = childPassengerForm.querySelector('.child-birth-certificate-form');
+                          const foreignPassportForm = childPassengerForm.querySelector('.child-foreign-passport-form');
+                          documentTypeSelect.addEventListener('change', function() {
+                              if (this.value === 'passport') {
+                                  passportForm.style.display = 'block';
+                                  birthCertificateForm.style.display = 'none';
+                                  foreignPassportForm.style.display = 'none';
+                              } else if (this.value === 'birth-certificate') {
+                                  passportForm.style.display = 'none';
+                                  birthCertificateForm.style.display = 'block';
+                                  foreignPassportForm.style.display = 'none';
+                              } else if (this.value === 'foreign-passport') {
+                                  passportForm.style.display = 'none';
+                                  birthCertificateForm.style.display = 'none';
+                                  foreignPassportForm.style.display = 'block';
+                              } else {
+                                  passportForm.style.display = 'none';
+                                  birthCertificateForm.style.display = 'none';
+                                  foreignPassportForm.style.display = 'none';
+                              }
+                          });
+  
+                          // Добавление обработчиков событий для флажков "Добавить багаж"
+                          const addBaggageCheckboxes = childPassengerForm.querySelectorAll('.add-baggage');
+                          addBaggageCheckboxes.forEach(checkbox => {
+                              checkbox.addEventListener('change', function () {
+                                  if (this.checked) {
+                                      const weight = this.dataset.weight;
+                                      const price = this.dataset.price;
+                                      console.log(`Добавлен багаж для ребенка до ${weight} кг за ${price} рублей`);
+                                      // Здесь вы можете выполнить нужные действия при выборе флажка
+                                  } else {
+                                      // Здесь вы можете выполнить нужные действия при снятии флажка
+                                  }
+                              });
+                          });
+  
+                          passengerFormsContainer.appendChild(childPassengerForm);
+                      }
+                  }
+                  
+                  // Функция для создания форм для животных
+                function createPetForms(count) {
+                  for (let i = 0; i < count; i++) {
+                      const petForm = document.createElement('div');
+                      petForm.classList.add('passenger-form');
+    
+                      // Установка стиля для созданного элемента
+                      petForm.style.backgroundColor = "rgba(160, 95, 171, 1)";
+                      petForm.style.borderRadius = "10px";
+                      petForm.style.padding = "10px";
+                      petForm.style.color = "white";
+    
+                      petForm.innerHTML = `
+                          <h4>Данные пассажира-животного ${i + 1}</h4>
+                          <label for="pet-species">Вид:</label>
+                    <input type="text" id="pet-species" name="pet-species"><br> <!-- Добавлено поле "вид" -->
+                    <label for="pet-name">Кличка:</label>
+                    <input type="text" id="pet-name" name="pet-name"><br>
+                    <label for="pet-breed">Порода:</label>
+                    <input type="text" id="pet-breed" name="pet-breed"><br>
+                    <label for="pet-vet-passport-number">Номер ветеринарного паспорта:</label>
+                    <input type="text" id="pet-vet-passport-number" name="pet-vet-passport-number"><br>
+                    <label for="pet-vaccination-certificate-number">Номер справки о прививках:</label>
+                    <input type="text" id="pet-vaccination-certificate-number" name="pet-vaccination-certificate-number"><br>
+                          <!-- Здесь добавьте поля для пассажира-животного -->
+                      `;
+                      passengerFormsContainer.appendChild(petForm);
+                  }
+              }
+      
+              // Функция для очистки контейнера форм пассажиров
+              function clearPassengerFormsContainer() {
+                  passengerFormsContainer.innerHTML = '';
+              }
+      
+              // Функция для обновления форм в зависимости от выбранного количества пассажиров
+              function updatePassengerForms() {
+                    clearPassengerFormsContainer();
+                    if (selectedAdults > 0) {
+                      createAdultPassengerForms(selectedAdults);
+                  }
+                  if (selectedChildren > 0) {
+                      createChildPassengerForms(selectedChildren);
+                  }
+                  if (selectedPets > 0) {
+                      createPetForms(selectedPets);
+                  }
+              }
+              
+              // Вызываем функцию при загрузке страницы
+              updatePassengerForms();
+                  
+              });
+  
+      </script>
+</body>
+
+</html>

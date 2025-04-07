@@ -1,0 +1,173 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Booking Detail</title>
+    <link rel="icon" type="image/x-icon" href='{% static "images/favicon.ico" %}'>
+    <style>
+        .seat-selector-container {
+            margin-bottom: 10px;
+        }
+        body {
+            background: linear-gradient(0deg, rgba(160, 95, 171, 1) 0%, rgba(255, 255, 255, 1) 100%);
+            font-family: 'Attentica 4F', sans-serif;
+            font-size: 30px;
+          }
+          .btn-primary {
+            background-color: rgba(235, 189, 242, 1);
+            border-color: rgba(235, 189, 242, 1);
+            font-size: 2rem; 
+          }
+          .btn-primary:hover {
+            background-color: rgba(160, 95, 171, 1);
+            border-color: rgba(160, 95, 171, 1);
+          }
+          .form-control {
+            font-size: 1.5rem; 
+          }
+          .form-select {
+            font-size: 1.5rem; 
+          }
+          .seat-selector {
+            font-family: 'Attentica 4F', sans-serif;
+            font-size: 1.5rem; /* вы можете изменить размер шрифта по своему усмотрению */
+        }
+        .container {
+            width: 80%;
+            margin: auto;
+        }
+        h1 {
+            text-align: center;
+        }
+        .booking-info, .passenger-info, .seat-info {
+            margin-bottom: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .total-price {
+            text-align: right;
+            font-size: 1.2em;
+            margin-top: 20px;
+        }
+        .total-price span {
+            font-weight: bold;
+        }
+    </style>
+    <script>
+        function calculateTotal() {
+            var basePrice = parseFloat("{{ booking.flight.route.price }}");
+            var passengerCount = {{ booking.passengers.count }};
+            var vipLounge = document.getElementById('vip-lounge').checked ? 65000 : 0;
+            var insurance = document.getElementById('insurance').checked ? 1000 : 0;
+
+            var totalPrice = (basePrice * passengerCount) + vipLounge + insurance;
+
+            document.getElementById('total-price-value').innerText = totalPrice.toFixed(2) + ' рублей';
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>Бронирование</h1>
+
+        <div class="booking-info">
+            <h2>Информация о бронировании</h2>
+            <p><strong>Пользователь:</strong> {{ booking.user.username }}</p>
+            <p><strong>Рейс:</strong> {{ booking.flight }}</p>
+        </div>
+
+        <div class="passenger-info">
+            <h2>Пассажиры</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Имя</th>
+                        <th>Фамилия</th>
+                        <th>Отчество</th>
+                        <th>Тип документа</th>
+                        <th>Серия паспорта</th>
+                        <th>Номер паспорта</th>
+                        <th>Серия загранпаспорта</th>
+                        <th>Номер загранпаспорта</th>
+                        <th>Багаж до 10 кг</th>
+                        <th>Багаж до 20 кг</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for passenger in booking.passengers.all %}
+                    <tr>
+                        <td>{{ passenger.name }}</td>
+                        <td>{{ passenger.surname }}</td>
+                        <td>{{ passenger.patronymic }}</td>
+                        <td>{{ passenger.document_type }}</td>
+                        <td>{{ passenger.passport_series }}</td>
+                        <td>{{ passenger.passport_number }}</td>
+                        <td>{{ passenger.foreign_passport_series }}</td>
+                        <td>{{ passenger.foreign_passport_number }}</td>
+                        <td>{{ passenger.has_luggage_10kg|yesno:"есть,отсутствует" }}</td>
+                        <td>{{ passenger.has_luggage_20kg|yesno:"есть,отсутствует" }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="seat-info">
+            <h2>Распределение мест</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Пассажир</th>
+                        <th>Место</th>
+                        <th>Ряд</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for seat_assignment in booking.seat_assignments.all %}
+                    <tr>
+                        <td>{{ seat_assignment.passenger.name }} {{ seat_assignment.passenger.surname }}</td>
+                        <td>{{ seat_assignment.seat }}</td>
+                        <td>{{ seat_assignment.row }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Кнопки для выбора VIP-зала и страховки -->
+        <div class="text-center mt-4">
+            <label for="vip-lounge">VIP-зал (+65 000 рублей):</label>
+            <input type="checkbox" id="vip-lounge" name="vip_lounge" onchange="calculateTotal()"><br>
+            <label for="insurance">Страховка (+1000 рублей):</label>
+            <input type="checkbox" id="insurance" name="insurance" onchange="calculateTotal()"><br>
+        </div>
+
+        <div class="total-price">
+            <p><span>Итоговая цена:</span> <span id="total-price-value">0.00 рублей</span></p>
+        </div>
+        <form action="{% url 'routes:qr_code' booking.id %}" method="post">
+            {% csrf_token %}
+            <div class="col-lg-2 mt-4">
+                <button type="submit" class="btn btn-warning mb-4">Оформить заказ</button>
+            </div>
+        </form>
+    </div>
+    <script>
+        // Инициализация расчета общей стоимости при загрузке страницы
+        window.onload = calculateTotal;
+    </script>
+</body>
+</html>

@@ -1,0 +1,28 @@
+body {
+    font-family: 'Attentica 4F', sans-serif;
+    font-size: 30px;
+    background: linear-gradient(0deg, rgba(160, 95, 171, 1) 0%, rgba(255, 255, 255, 1) 100%) !important;
+}
+
+.btn-purple {
+    background-color: rgba(160, 95, 171, 1) !important;
+    color: white !important;
+    transition: background-color 0.3s; 
+}
+
+.btn-purple:hover {
+    background-color: rgba(130, 75, 141, 1) !important;
+}
+
+.card {
+    background-color: rgba(255, 255, 255, 0.7);
+    border-radius: 15px;
+}
+
+.card-body {
+    padding: 20px;
+}
+
+.form-outline {
+    margin-bottom: 0.5rem; 
+}

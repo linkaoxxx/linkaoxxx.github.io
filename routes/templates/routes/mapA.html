@@ -1,0 +1,182 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>map</title>
+  <link href="https://fonts.cdnfonts.com/css/attentica-4f" rel="stylesheet">
+  <link rel="stylesheet" href='{% static "styles/mapB.css" %}'>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  {% comment %} <link rel="icon" type="image/x-icon" href='{% static "images/favicon.ico" %}'> {% endcomment %}
+</head>
+
+<body>
+    <div class="container">
+      <h1>Flight ID: {{ flight_instance.id }}</h1>
+      <p>Departure Date: {{ flight_instance.departure_date }}</p>
+      <p>Arrival Date: {{ flight_instance.arrival_date }}</p>
+        <h1 class="text-center mb-4">Выбор места</h1>
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="seats-container">
+                    <!-- Генерация мест Airbus 350-900-->
+                    <div class="seats">
+                        <!-- Генерация мест Airbus 350-900-->
+                        {% for cabin in cabins %}
+                        <div class="seat-row" data-row="{{ cabin.row_number }}">
+                            <div class="row-number">Ряд {{ cabin.row_number }}</div>
+                            {% for seat in cabin.seats.all %}
+                                {% if seat.seat_number in takenSeats %}
+                                    <div class="seat taken" data-seat="{{ seat.seat_number }}">{{ seat.seat_number }}</div>
+                                {% else %}
+                                <div class="seat" data-seat="{{ seat.seat_number }}">{{ seat.seat_number }}</div>
+                                {% endif %}
+                                    {% if seat.seat_number == 'C' %}
+                                    <div class="corridor"></div> <!-- Добавляем коридор после места C -->
+                                    {% endif %}
+                                    {% if seat.seat_number == 'G' %}
+                                    <div class="corridor"></div> <!-- Добавляем коридор после места G -->
+                                    {% endif %}
+                                {% endfor %}
+                                <div class="corridor"></div> <!-- Добавляем коридор после последнего места D -->
+                            </div>                        
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="legend-and-forms">
+                    <div class="legend">
+                        <h2>Обозначение</h2>
+                        <div class="legend-item">
+                            <div class="color" style="background-color: rgba(235, 189, 242, 1);"></div>
+                            <div class="label">Свободное место</div>
+                        </div>
+                        <div class="legend-item">
+                            <div class="color" style="background-color: rgba(160, 95, 171, 1);"></div>
+                            <div class="label">Выбранное место</div>
+                        </div>
+                        <div class="legend-item">
+                            <div class="color" style="background-color: #535353;"></div>
+                            <div class="label">Место при наведении</div>
+                        </div>
+                        <div class="legend-item">
+                            <div class="color" style="background-color: #ccc;"></div>
+                            <div class="label">Занятое место</div>
+                        </div>
+
+                        <div class="text-center mt-4">
+                            <a id="passenger-data-btn" href="{% url 'routes:get_user_seat_assignments' %}?adult={{ adult_count }}&child={{ child_count }}&pet={{ pet_count }}&limit={{ total_passengers }}" class="btn btn-primary" style="background-color: rgba(160, 95, 171, 1); color: white; border-color: rgba(160, 95, 171, 1); font-size: 1.5rem; border-radius: 0.25rem; padding: 10px 20px; text-align: center; display: inline-block;">Перейти к заполнению данных о пассажирах</a>
+                        </div>
+                        
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function () {
+                                const passengerDataBtn = document.getElementById('passenger-data-btn');
+                                if (passengerDataBtn) {
+                                    passengerDataBtn.addEventListener('click', function (event) {
+                                        event.preventDefault();
+                                        const urlParams = new URLSearchParams(window.location.search);
+                                        const adultCount = urlParams.get('adult') || 0;
+                                        const childCount = urlParams.get('child') || 0;
+                                        const petCount = urlParams.get('pet') || 0;
+                                        const targetUrl = `{% url 'routes:pas' %}?adult=${adultCount}&child=${childCount}&pet=${petCount}`;
+                                        window.location.href = targetUrl;
+                                    });
+                                }
+                            });
+                        </script>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const urlParams = new URLSearchParams(window.location.search);
+            const seats = document.querySelectorAll('.seat');
+            const selectedPassengers = parseInt(urlParams.get('passengers')) || 0;
+    
+            // Функция для обработки клика на месте
+            function toggleSeat() {
+                const selectedSeats = document.querySelectorAll('.seat.selected').length;
+                // Проверяем, не превышает ли количество выбранных мест общее количество пассажиров
+                if (selectedSeats >= selectedPassengers) {
+                    alert('Пожалуйста, выберите не более ' + selectedPassengers + ' мест.');
+                } else {
+                    this.classList.toggle('selected');
+                }
+            }
+    
+            seats.forEach(seat => {
+                if (!seat.classList.contains('taken')) {
+                    seat.addEventListener('click', toggleSeat);
+                }
+            });
+        });
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const urlParams = new URLSearchParams(window.location.search);
+            const selectedPassengers = parseInt(urlParams.get('passengers')) || 0;
+            const flightId = "{{ flight_instance.id }}"; // Добавляем идентификатор рейса
+    
+            // Обработчик события для перехода к заполнению данных о пассажирах
+            function goToPassengerDataPage(event) {
+                event.preventDefault();  // Предотвращает переход по ссылке по умолчанию
+                const selectedSeats = document.querySelectorAll('.seat.selected').length;
+                if (selectedSeats < selectedPassengers) {
+                    alert('Пожалуйста, выберите места для всех пассажиров.');
+                } else {
+                    const selectedSeatData = Array.from(document.querySelectorAll('.seat.selected')).map(seat => {
+                        return {
+                            seat_id: seat.dataset.seatId,
+                            row_number: seat.parentElement.dataset.row
+                        };
+                    });
+    
+                    fetch('/routes/save_seats/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': '{{ csrf_token }}',
+                        },
+                        body: JSON.stringify({
+                            flight_id: flightId,
+                            selected_seats: selectedSeatData
+                        })
+                    }).then(response => {
+                        if (response.ok) {
+                            window.location.href = "{% url 'routes:pas' %}";
+                        } else {
+                            alert('Произошла ошибка при сохранении мест.');
+                        }
+                    }).catch(error => {
+                        console.error('Ошибка:', error);
+                        alert('Произошла ошибка при сохранении мест.');
+                    });
+                }
+            }
+    
+            // Добавляем обработчик события для кнопки
+            const submitButton = document.getElementById('passenger-data-btn');
+            if (submitButton) {
+                submitButton.addEventListener('click', goToPassengerDataPage);
+            }
+    
+            // Добавляем идентификатор к местам
+            document.querySelectorAll('.seat').forEach((seat, index) => {
+                seat.dataset.seatId = index + 1;  // Примерно устанавливаем id места, замените на актуальное значение
+            });
+        });
+    </script>
+    
+    
+     
+</body>
+
+</html>

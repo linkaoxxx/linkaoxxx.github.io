@@ -1,0 +1,242 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>map</title>
+  <link rel="stylesheet" href='{% static "styles/place.css" %}'>
+</head>
+
+<body>
+  <div class="container">
+    <h1>Выбор места</h1>
+    <div class="seats-container">
+      <div class="seats">
+        <!-- Генерация мест -->
+        <div class="seat-row" data-row="1">
+          <div class="seat">1A</div>
+          <div class="seat">1B</div>
+          <div class="seat">1C</div>
+          <div class="corridor"></div>
+          <div class="seat">1D</div>
+          <div class="seat">1E</div>
+          <div class="seat">1F</div>
+        </div>
+        <div class="seat-row" data-row="2">
+            <div class="seat">2A</div>
+            <div class="seat">2B</div>
+            <div class="seat">2C</div>
+            <div class="corridor"></div>
+            <div class="seat">2D</div>
+            <div class="seat">2E</div>
+            <div class="seat">2F</div>
+        </div>
+        <div class="seat-row" data-row="3">
+            <div class="seat">3A</div>
+            <div class="seat">3B</div>
+            <div class="seat">3C</div>
+            <div class="corridor"></div>
+            <div class="seat">3D</div>
+            <div class="seat">3E</div>
+            <div class="seat">3F</div>
+        </div>
+        <div class="seat-row" data-row="4">
+            <div class="seat">4A</div>
+            <div class="seat">4B</div>
+            <div class="seat">4C</div>
+            <div class="corridor"></div>
+            <div class="seat">4D</div>
+            <div class="seat">4E</div>
+            <div class="seat">4F</div>
+        </div>
+        <div class="seat-row" data-row="5">
+            <div class="seat">5A</div>
+            <div class="seat">5B</div>
+            <div class="seat">5C</div>
+            <div class="corridor"></div>
+            <div class="seat">5D</div>
+            <div class="seat">5E</div>
+            <div class="seat">5F</div>
+        </div>
+        <div class="seat-row" data-row="6">
+            <div class="seat">6A</div>
+            <div class="seat">6B</div>
+            <div class="seat">6C</div>
+            <div class="corridor"></div>
+            <div class="seat">6A</div>
+            <div class="seat">6E</div>
+            <div class="seat">6F</div>
+        </div>
+        <div class="seat-row" data-row="7">
+            <div class="seat">7A</div>
+            <div class="seat">7B</div>
+            <div class="seat">7C</div>
+            <div class="corridor"></div>
+            <div class="seat">7D</div>
+            <div class="seat">7E</div>
+            <div class="seat">7F</div>
+        </div>
+        <div class="seat-row" data-row="8">
+            <div class="seat">8A</div>
+            <div class="seat">8B</div>
+            <div class="seat">8C</div>
+            <div class="corridor"></div>
+            <div class="seat">8D</div>
+            <div class="seat">8E</div>
+            <div class="seat">8F</div>
+        </div>
+        <div class="seat-row" data-row="9">
+            <div class="seat">9A</div>
+            <div class="seat">9B</div>
+            <div class="seat">9C</div>
+            <div class="corridor"></div>
+            <div class="seat">9D</div>
+            <div class="seat">9E</div>
+            <div class="seat">9F</div>
+          </div>
+          <div class="seat-row" data-row="10">
+              <div class="seat">10A</div>
+              <div class="seat">10B</div>
+              <div class="seat">10C</div>
+              <div class="corridor"></div>
+              <div class="seat">10D</div>
+              <div class="seat">10E</div>
+              <div class="seat">10F</div>
+          </div>
+          <div class="seat-row" data-row="11">
+              <div class="seat">11A</div>
+              <div class="seat">11B</div>
+              <div class="seat">11C</div>
+              <div class="corridor"></div>
+              <div class="seat">11D</div>
+              <div class="seat">11E</div>
+              <div class="seat">11F</div>
+          </div>
+          <div class="seat-row" data-row="12">
+              <div class="seat">12A</div>
+              <div class="seat">12B</div>
+              <div class="seat">12C</div>
+              <div class="corridor"></div>
+              <div class="seat">12D</div>
+              <div class="seat">12E</div>
+              <div class="seat">12F</div>
+          </div>
+          <div class="seat-row" data-row="13">
+              <div class="seat">13A</div>
+              <div class="seat">13B</div>
+              <div class="seat">13C</div>
+              <div class="corridor"></div>
+              <div class="seat">13D</div>
+              <div class="seat">13E</div>
+              <div class="seat">13F</div>
+          </div>
+          <div class="seat-row" data-row="14">
+              <div class="seat">14A</div>
+              <div class="seat">14B</div>
+              <div class="seat">14C</div>
+              <div class="corridor"></div>
+              <div class="seat">14A</div>
+              <div class="seat">14E</div>
+              <div class="seat">14F</div>
+          </div>
+          <div class="seat-row" data-row="15">
+              <div class="seat">15A</div>
+              <div class="seat">15B</div>
+              <div class="seat">15C</div>
+              <div class="corridor"></div>
+              <div class="seat">15D</div>
+              <div class="seat">15E</div>
+              <div class="seat">15F</div>
+          </div>
+          <div class="seat-row" data-row="16">
+              <div class="seat">16A</div>
+              <div class="seat">16B</div>
+              <div class="seat">16C</div>
+              <div class="corridor"></div>
+              <div class="seat">16D</div>
+              <div class="seat">16E</div>
+              <div class="seat">16F</div>
+          </div>
+          <div class="seat-row" data-row="17">
+            <div class="seat">17A</div>
+            <div class="seat">17B</div>
+            <div class="seat">17C</div>
+            <div class="corridor"></div>
+            <div class="seat">17D</div>
+            <div class="seat">17E</div>
+            <div class="seat">17F</div>
+        </div>
+        <div class="seat-row" data-row="18">
+            <div class="seat">18A</div>
+            <div class="seat">18B</div>
+            <div class="seat">18C</div>
+            <div class="corridor"></div>
+            <div class="seat">18A</div>
+            <div class="seat">18E</div>
+            <div class="seat">18F</div>
+        </div>
+        <div class="seat-row" data-row="19">
+            <div class="seat">19A</div>
+            <div class="seat">19B</div>
+            <div class="seat">19C</div>
+            <div class="corridor"></div>
+            <div class="seat">19D</div>
+            <div class="seat">19E</div>
+            <div class="seat">19F</div>
+        </div>
+        <div class="seat-row" data-row="20">
+            <div class="seat">20A</div>
+            <div class="seat">20B</div>
+            <div class="seat">20C</div>
+            <div class="corridor"></div>
+            <div class="seat">20D</div>
+            <div class="seat">20E</div>
+            <div class="seat">20F</div>
+        </div>
+      </div>
+      <div class="legend">
+        <h2>Обозначение</h2>
+        <div class="legend-item">
+          <div class="color" style="background-color: rgba(235, 189, 242, 1);"></div>
+          <div class="label">Свободное место</div>
+        </div>
+        <div class="legend-item">
+          <div class="color" style="background-color: rgba(160, 95, 171, 1);"></div>
+          <div class="label">Выбранное место</div>
+        </div>
+        <div class="legend-item">
+          <div class="color" style="background-color: #535353;"></div>
+          <div class="label">Место при наведении</div>
+        </div>
+        <div class="buy-ticket text-center mt-4">
+          <button class="btn btn-primary buy-ticket-btn" onclick="openProfilePage()">Купить билеты</button>
+        </div>
+      </div>
+      </div>
+  </div>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const seats = document.querySelectorAll('.seat');
+
+      // Функция для обработки клика на месте
+      function toggleSeat() {
+        this.classList.toggle('selected');
+      }
+
+      // Перебираем все места и добавляем обработчик клика
+      seats.forEach(seat => {
+        seat.addEventListener('click', toggleSeat);
+      });
+    });
+  </script>
+  <script>
+    function openProfilePage() {
+      window.location.href = "profile.html"; // Переход на страницу profile.html
+    }
+  </script>
+</body>
+
+</html>
